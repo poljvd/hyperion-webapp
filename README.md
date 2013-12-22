@@ -37,7 +37,7 @@ sudo service nginx restart
 sudo service php5-fpm restart
 ```
 
-The site should now be available on http://<rpi-ip>:8888
+The site should now be available on http://ip-of-host:8888
 
 ## License
 This software is released un the GPL license
