@@ -6,7 +6,6 @@ Colorpicker webapp for Hyperion (https://github.com/tvdzwan/hyperion/wiki/)
 The color picker is based on the Boblight version created by Nadnerb (http://blog.nadnerb.co.uk/)
 
 ## Installation
-
 Install dependencies:
 ```
 sudo apt-get install nginx php5-fpm
@@ -41,5 +40,4 @@ sudo service php5-fpm restart
 The site should now be available on http://<rpi-ip>:8888
 
 ## License
-
 This software is released un the GPL license
