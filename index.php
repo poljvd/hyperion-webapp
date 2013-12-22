@@ -1,13 +1,13 @@
 <!--
+ColourPicker webapp for Hyperion.
+
+Based on:
 ColourPicker v1.0 by nadnerb - April 2013
-
-Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
-
 More info: http://blog.nadnerb.co.uk
 Twitter: @_nadnerb
 
-
-
+ColorPicker widget:
+Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 -->
 
 <?php
