@@ -8,6 +8,7 @@ The color picker is based on the Boblight version created by Nadnerb (http://blo
 ## Installation
 Install dependencies:
 ```
+sudo apt-get update
 sudo apt-get install nginx php5-fpm
 ```
 
