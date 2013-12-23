@@ -94,7 +94,7 @@ Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 					?>
 				</div>
 			</form>
-			<a href="https://github.com/tvdzwan/hyperion/wiki">Hyperion</a><br>(original version by <a href="http://twitter.com/_nadnerb">@_nadnerb</a>)
+			<a href="https://github.com/tvdzwan/hyperion/wiki">Hyperion Team</a><br>(original version by <a href="http://twitter.com/_nadnerb">@_nadnerb</a>)
 		</div>
 
 	</body>
