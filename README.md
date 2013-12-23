@@ -32,7 +32,13 @@ server {
 }
 ```
 
-Download the contents of this repository to /home/pi/www and restart the webserver:
+Download the contents of this repository to /home/pi/www. You can either download a zip from github or clone the repository using (you need to have git installed for this):
+```
+git clone https://github.com/poljvd/hyperion-webapp.git /home/pi/www
+```
+
+
+Finally restart the webserver:
 ```
 sudo service nginx restart
 sudo service php5-fpm restart
