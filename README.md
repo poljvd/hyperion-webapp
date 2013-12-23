@@ -41,4 +41,4 @@ sudo service php5-fpm restart
 The site should now be available on http://ip-of-host:8888
 
 ## License
-This software is released un the GPL license
+This software is released under the GPL license
