@@ -47,7 +47,7 @@ sudo service php5-fpm restart
 The site should now be available on http://ip-of-host:8888
 
 ## FAQ
-I got a 403 error when loading the webpage.
+I got a 403 error when loading the webpage.  
 _Check if index.php exists in the /home/pi/www folder and check the permissions on the file (change with chmod -R 775 /home/pi/www)_
 
 ## License
