@@ -14,7 +14,7 @@ Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 	session_start();
 
 	$address = '127.0.0.1:19444';
-	$priority = 5000;
+	$priority = 500;
 
 	if($_POST['change']) {
 		// change colour of the selected priority channel
