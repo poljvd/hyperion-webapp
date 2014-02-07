@@ -27,7 +27,7 @@ Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 	}
 
 	// retrieve all effects
-	$effectsString = exec('/usr/bin/hyperion-remote --list | grep \'"name" : \' | cut -d \'"\' -f4 | tr \'\\n\' \',\'');
+	$effectsString = exec('/usr/bin/hyperion-remote --address '.$address.' --list | grep \'"name" : \' | cut -d \'"\' -f4 | tr \'\\n\' \',\'');
 	$effects = explode(',', $effectsString);
 	if (count($effects) > 0) {
 		array_splice($effects, -1); // remove last empty element
@@ -36,7 +36,7 @@ Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 	for ($i = 0; $i < count($effects); $i++) {
 		if($_POST['effect-'.$i.'']) {
 			// switch on the selected effect
-			shell_exec('/usr/bin/hyperion-remote --effect "'.$effects[$i].'" --priority '.$priority);
+			shell_exec('/usr/bin/hyperion-remote --address '.$address.' --effect "'.$effects[$i].'" --priority '.$priority);
 		}	
 	}
 
