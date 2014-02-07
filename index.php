@@ -14,7 +14,7 @@ Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 	session_start();
 
 	$address = '127.0.0.1:19444';
-	$priority = 50;
+	$priority = 500;
 
 	if($_POST['change']) {
 		// change colour of the selected priority channel
@@ -94,7 +94,7 @@ Farbtastic: http://acko.net/blog/farbtastic-jquery-color-picker-plug-in/
 					?>
 				</div>
 			</form>
-			<a href="https://github.com/tvdzwan/hyperion/wiki">Hyperion</a><br>(original version by <a href="http://twitter.com/_nadnerb">@_nadnerb</a>)
+			<a href="https://github.com/tvdzwan/hyperion/wiki">Hyperion Team</a><br>(original version by <a href="http://twitter.com/_nadnerb">@_nadnerb</a>)
 		</div>
 
 	</body>
