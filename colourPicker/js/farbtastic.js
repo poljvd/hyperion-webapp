@@ -337,7 +337,7 @@ jQuery._farbtastic = function (container, callback) {
 
     // Init color
 
-  fb.setColor('#'+selColour);
+  fb.setColor('#'+currentColour);
 
   // Set linked elements/callback
   if (callback) {

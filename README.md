@@ -4,6 +4,7 @@ hyperion-webapp
 Colorpicker webapp for Hyperion (https://github.com/tvdzwan/hyperion/wiki/)
 
 The color picker is based on the Boblight version created by Nadnerb (http://blog.nadnerb.co.uk/)
+The color picker was re-factored by Bradley Cornford (http://bradleycornford.co.uk/)
 
 ## Installation
 Install dependencies:
@@ -49,6 +50,8 @@ The site should now be available on http://ip-of-host:8888
 ## FAQ
 - I got a 403 error when loading the webpage.  
 _Check if index.php exists in the /home/pi/www folder and check the permissions on the file (change with chmod -R 775 /home/pi/www)_
+- I got an error when clicking a button.
+_Check the owner of the index.php file in /home/pi/www (change with chown -R pi:www-data /home/pi/www)_
 
 ## License
 This software is released under the GPL license
