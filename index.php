@@ -178,60 +178,16 @@ if ($currentCommands) {
 
         </div>
 
-        <?php
-
-            if ($messages && $messageDisplay) {
-                foreach ($messages as $message) {
-                    echo '<div class="alert alert-' . $message['type'] . '">' . $message['content'] . '</div>';
-                }
-
-                $messages = array();
-            }
-
-        ?>
-
         <div id="wrapper">
 
             <div align="center" id="content">
 
                 <form id="form" name="form" action="" method="post">
 
-                    <div class="border thin">
-                    <?php
-
-                        if ($currentStatus) {
-                            echo '<input name="submit" type="submit" class="large button red" value="Turn Off" />';
-                        } else {
-                            echo '<input name="submit" type="submit" class="large button green" value="Turn On" />';
-                        }
-
-                    ?>
-                    </div>
-
-                    <div <?php echo !$currentStatus ? 'class="hidden"' : ''; ?>>
-                        <h2 class="border">Options</h2>
-                    </div>
-
                     <div id="color-picker" class="<?php echo !$currentStatus ? 'hidden' : ''; ?>"></div>
 
                     <div class="border thin <?php echo !$currentStatus ? 'hidden' : ''; ?>">
                         <input name="colour" id="color" size="7" type="text" class="colourCode" value=""/>
-                    </div>
-
-                    <div id="priority-holder" class="border thin<?php echo !$currentStatus ? ' hidden' : ''; ?>">
-                        <input type="hidden" id="priority" name="priority" value="<?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 500; ?>" />
-                        <div id="priority-slider-display"><strong>Priority:</strong> <span><?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 500; ?></span></div>
-                        <div id="priority-slider"></div>
-                    </div>
-
-                    <div id="duration-display-holder" class="border thin<?php echo !$currentStatus ? ' hidden' : ''; ?>">
-                        <input type="hidden" id="duration" name="duration" value="" />
-                        <input type="checkbox" id="duration-display" name="duration-display" value="duration" /><label for="duration-display">Enable Duration?</label>
-                    </div>
-
-                    <div id="duration-holder" class="border thin hidden">
-                        <div id="duration-slider-display"><strong>Duration:</strong> <span>1 second</span></div>
-                        <div id="duration-slider"></div>
                     </div>
 
                     <div <?php echo !$currentStatus ? 'class="hidden"' : ''; ?>>
@@ -283,11 +239,53 @@ if ($currentCommands) {
                         ?>
                     </div>
 
+                    <?php
+
+                        if ($currentStatus) {
+                            echo '<input name="submit" type="submit" class="large button red" value="Turn Off" />';
+                        } else {
+                            echo '<input name="submit" type="submit" class="large button green" value="Turn On" />';
+                        }
+
+                    ?>
+
+                    <div <?php echo !$currentStatus ? 'class="hidden"' : ''; ?>>
+                        <h2 class="border">Options</h2>
+                    </div>
+
+                    <div id="priority-holder" class="border thin<?php echo !$currentStatus ? ' hidden' : ''; ?>">
+                        <input type="hidden" id="priority" name="priority" value="<?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 500; ?>" />
+                        <div id="priority-slider-display"><strong>Priority:</strong> <span><?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 800; ?></span></div>
+                        <div id="priority-slider"></div>
+                    </div>
+
+                    <div id="duration-display-holder" class="border thin<?php echo !$currentStatus ? ' hidden' : ''; ?>">
+                        <input type="hidden" id="duration" name="duration" value="" />
+                        <input type="checkbox" id="duration-display" name="duration-display" value="duration" /><label for="duration-display">Enable Duration?</label>
+                    </div>
+
+                    <div id="duration-holder" class="border thin hidden">
+                        <div id="duration-slider-display"><strong>Duration:</strong> <span>1 second</span></div>
+                        <div id="duration-slider"></div>
+                    </div>
+
                 </form>
 
             </div>
 
         </div>
+
+        <?php
+
+            if ($messages && $messageDisplay) {
+                foreach ($messages as $message) {
+                    echo '<div class="alert alert-' . $message['type'] . '">' . $message['content'] . '</div>';
+                }
+
+                $messages = array();
+            }
+
+        ?>
 
         <div align="center" id="footer">
             <a href="https://github.com/tvdzwan/hyperion/wiki">Hyperion Team</a><br/>
