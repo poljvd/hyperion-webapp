@@ -4,6 +4,7 @@
  * ColourPicker webapp for Hyperion.
  *
  * Refactored by: Brad Cornford <me@bradleycornford.co.uk> - February 2014
+ * Email: me@bradleycornford.co.uk
  * Twitter: @BradCornford
  *
  * Based on ColourPicker v1.0 by nadnerb - April 2013
@@ -14,25 +15,14 @@
  */
 
 include('colourPicker/lib/RemoteCommand.class.php');
+include('colourPicker/conf/Configuration.php');
 
 session_start();
 
-$messageDisplay = true;
-
-if (!isset($_SESSION['address'])) {
-    $_SESSION['address'] = '127.0.0.1:19444';
-}
-
-if (!isset($_SESSION['priority'])) {
+if (empty($_SESSION)) {
     $_SESSION['priority'] = array();
-}
-
-if (!isset($_SESSION['duration'])) {
-    $_SESSION['duration'] = false;
-}
-
-if (!isset($_SESSION['colour'])) {
     $_SESSION['colour'] = '00FFFF';
+    $_SESSION['duration'] = -1;
 }
 
 $messages = array();
@@ -42,7 +32,8 @@ $com = new RemoteCommand();
 if (isset($_POST['submit'])) {
     switch ($_POST['submit']) {
         case 'Turn On':
-            $return = $com->withSleep(2)
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withSleep(2)
                 ->callOn();
             if ($return) {
                 $messages[] = array(
@@ -52,7 +43,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Turn Off':
-            $return = $com->withSleep(1)
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withSleep(1)
                 ->callOff();
             if ($return) {
                 $messages[] = array(
@@ -62,7 +54,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Clear':
-            $return = $com->withAddress($_SESSION['address'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withAddress($config['hyperionAddress'])
                 ->withPriority($_POST['priority'])
                 ->callClear();
             unset($_SESSION['priority'][$_POST['priority']]);
@@ -74,7 +67,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Clear All':
-            $return = $com->withAddress($_SESSION['address'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withAddress($config['hyperionAddress'])
                 ->callClearAll();
             $_SESSION['priority'] = array();
             if ($return) {
@@ -85,29 +79,33 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Change Colour':
-            $return = $com->withAddress($_SESSION['address'])
-                ->withDuration($_POST['duration'] ? $_POST['duration'] : false)
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withAddress($config['hyperionAddress'])
+                ->withDuration($_POST['duration'] > 0 ? $_POST['duration'] : false)
                 ->withPriority($_POST['priority'])
                 ->withColour($_POST['colour'])
                 ->callColour();
             $_SESSION['colour'] = $_POST['colour'];
             $_SESSION['priority'][$_POST['priority']] = true;
+            $_SESSION['duration'] = $_POST['duration'];
             $messages[] = array(
                 'type' => 'success',
-                'content' => 'Loaded colour "' . $_POST['colour'] . '" with the priority ' . $_POST['priority'] . '' . ($_POST['duration'] ? ' and the duration ' . $_POST['duration'] : '') . '.'
+                'content' => 'Loaded colour "' . $_POST['colour'] . '" with the priority ' . $_POST['priority'] . '' . ($_POST['duration'] > 0 ? ' and the duration ' . $_POST['duration'] : '') . '.'
             );
             break;
         case 'Loading Effect...':
-            $return = $com->withAddress($_SESSION['address'])
-                ->withDuration($_POST['duration'] ? $_POST['duration'] : false)
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withAddress($config['hyperionAddress'])
+                ->withDuration($_POST['duration'] > 0 ? $_POST['duration'] : false)
                 ->withPriority($_POST['priority'])
                 ->withEffect($_POST['effect'])
                 ->callEffect();
             $_SESSION['priority'][$_POST['priority']] = true;
+            $_SESSION['duration'] = $_POST['duration'];
             if ($return) {
                 $messages[] = array(
                     'type' => 'success',
-                    'content' => 'Loaded effect "' . $_POST['effect'] . '" with the priority ' . $_POST['priority'] . '' . ($_POST['duration'] ? ' and the duration ' . $_POST['duration'] : '') . '.'
+                    'content' => 'Loaded effect "' . $_POST['effect'] . '" with the priority ' . $_POST['priority'] . '' . ($_POST['duration'] > 0 ? ' and the duration ' . $_POST['duration'] : '') . '.'
                 );
             }
             break;
@@ -124,9 +122,15 @@ if (isset($_POST['submit'])) {
     }
 }
 
-$currentStatus = $com->getStatus();
-$currentCommands = $com->withAddress($_SESSION['address'])->getCommands();
-$currentEffects = $com->withAddress($_SESSION['address'])->getEffects();
+$currentStatus = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+    ->withAddress($config['hyperionAddress'])
+    ->getStatus();
+$currentCommands = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+    ->withAddress($config['hyperionAddress'])
+    ->getCommands();
+$currentEffects = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+    ->withAddress($config['hyperionAddress'])
+    ->getEffects();
 
 if ($currentCommands) {
     $_SESSION['priority'] = array();
@@ -137,6 +141,10 @@ if ($currentCommands) {
             $_SESSION['priority'][$command] = true;
         }
     }
+}
+
+if ($config['overwriteStatus']) {
+    $currentStatus = true;
 }
 
 ?>
@@ -241,11 +249,23 @@ if ($currentCommands) {
 
                     <?php
 
-                        if ($currentStatus) {
-                            echo '<input name="submit" type="submit" class="large button red" value="Turn Off" />';
-                        } else {
-                            echo '<input name="submit" type="submit" class="large button green" value="Turn On" />';
-                        }
+                    if (!$config['overwriteStatus']) {
+
+                    ?>
+                        <div class="border thin">
+                            <?php
+
+                            if ($currentStatus) {
+                                echo '<input name="submit" type="submit" class="large button red" value="Turn Off" />';
+                            } else {
+                                echo '<input name="submit" type="submit" class="large button green" value="Turn On" />';
+                            }
+
+                            ?>
+                        </div>
+                    <?php
+
+                    }
 
                     ?>
 
@@ -255,17 +275,13 @@ if ($currentCommands) {
 
                     <div id="priority-holder" class="border thin<?php echo !$currentStatus ? ' hidden' : ''; ?>">
                         <input type="hidden" id="priority" name="priority" value="<?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 500; ?>" />
-                        <div id="priority-slider-display"><strong>Priority:</strong> <span><?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 800; ?></span></div>
+                        <div id="priority-slider-display"><strong>Priority:</strong> <span><?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 500; ?></span></div>
                         <div id="priority-slider"></div>
                     </div>
 
-                    <div id="duration-display-holder" class="border thin<?php echo !$currentStatus ? ' hidden' : ''; ?>">
-                        <input type="hidden" id="duration" name="duration" value="" />
-                        <input type="checkbox" id="duration-display" name="duration-display" value="duration" /><label for="duration-display">Enable Duration?</label>
-                    </div>
-
-                    <div id="duration-holder" class="border thin hidden">
-                        <div id="duration-slider-display"><strong>Duration:</strong> <span>1 second</span></div>
+                    <div id="duration-holder" class="border thin <?php echo !$currentStatus ? ' hidden' : ''; ?>">
+                        <input type="hidden" id="duration" name="duration" value="<?php echo !empty($_SESSION['duration']) ? $_SESSION['duration'] : -1; ?>" />
+                        <div id="duration-slider-display"><strong>Duration:</strong> <span>Infinity</span></div>
                         <div id="duration-slider"></div>
                     </div>
 
@@ -277,7 +293,7 @@ if ($currentCommands) {
 
         <?php
 
-            if ($messages && $messageDisplay) {
+            if ($messages && $config['messageDisplay']) {
                 foreach ($messages as $message) {
                     echo '<div class="alert alert-' . $message['type'] . '">' . $message['content'] . '</div>';
                 }
@@ -304,6 +320,7 @@ if ($currentCommands) {
 
         var currentColour="<?php echo $_SESSION['colour']; ?>";
         var currentPriority="<?php echo !empty($_SESSION['priority']) ? key($_SESSION['priority']) : 500; ?>";
+        var currentDuration="<?php echo $_SESSION['duration']; ?>";
 
     </script>
 

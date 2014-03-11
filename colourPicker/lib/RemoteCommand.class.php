@@ -52,6 +52,27 @@ class RemoteCommand
     CONST ARGUMENT_EFFECT = ' --effect \'%s\' ';
 
     /**
+     * Command server
+     *
+     * @var string
+     */
+    protected $server = false;
+
+    /**
+     * Command server username
+     *
+     * @var string
+     */
+    protected $username = false;
+
+    /**
+     * Command server password
+     *
+     * @var string
+     */
+    protected $password = false;
+
+    /**
      * Command address
      *
      * @var string
@@ -107,7 +128,7 @@ class RemoteCommand
      */
     public function callOn()
     {
-        $result = $this->executeCommand('initctl start hyperion', true);
+        $result = $this->executeCommand('/sbin/initctl start hyperion', true);
 
         return $result;
     }
@@ -119,7 +140,7 @@ class RemoteCommand
      */
     public function callOff()
     {
-        $result = $this->executeCommand('initctl stop hyperion', true);
+        $result = $this->executeCommand('/sbin/initctl stop hyperion', true);
 
         return $result;
     }
@@ -241,6 +262,9 @@ class RemoteCommand
      */
     protected function resetArguments()
     {
+        $this->server = false;
+        $this->username = false;
+        $this->password = false;
         $this->address = false;
         $this->priority = false;
         $this->duration = false;
@@ -250,11 +274,29 @@ class RemoteCommand
     }
 
     /**
-     * Set the command address as IP Address
+     * Set the command server IP Address, authentication username and authentication password
+     *
+     * @param string $address  The new command server IP Address value
+     * @param string $username The new command server authentication username value
+     * @param string $password The new command server authentication password value
+     *
+     * @return self
+     */
+    public function withServer($address, $username, $password)
+    {
+        $this->server = (string) $address;
+        $this->username = (string) $username;
+        $this->password = (string) $password;
+
+        return $this;
+    }
+
+    /**
+     * Set the command address as IP Address with Port
      *
      * @param string $value The new command address value
      *
-     * @return object
+     * @return self
      */
     public function withAddress($value)
     {
@@ -268,7 +310,7 @@ class RemoteCommand
      *
      * @param integer $value The new command priority value
      *
-     * @return object
+     * @return self
      */
     public function withPriority($value)
     {
@@ -282,7 +324,7 @@ class RemoteCommand
      *
      * @param integer $value The new command duration value
      *
-     * @return object
+     * @return self
      */
     public function withDuration($value)
     {
@@ -359,7 +401,19 @@ class RemoteCommand
             $command = sprintf(self::COMMAND, $command);
         }
 
-        $this->output = shell_exec($command);
+        if ($this->server == '127.0.0.1' || $this->server == getHostByName(getHostName())) {
+            $this->output = shell_exec($command);
+        } else {
+            $connection = ssh2_connect($this->server, 22);
+
+            if ($this->password) {
+                ssh2_auth_password($connection, $this->username, $this->password);
+            } else {
+                ssh2_auth_none($connection, $this->username);
+            }
+
+            $this->output = ssh2_exec($connection, $command);
+        }
 
         if ($this->sleep) {
             sleep($this->sleep);
