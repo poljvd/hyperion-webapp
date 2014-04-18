@@ -36,6 +36,13 @@ $config = array(
     'hyperionAddress' => '127.0.0.1:19444',
 
     /**
+     * System service controller.
+     * Always required.
+     * Default "/sbin/initctl".
+     */
+    'serverController' => '/sbin/initctl',
+
+    /**
      * Message display setting.
      * Set to false to stop status messages from being displayed.
      * Default "true".
