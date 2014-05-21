@@ -17,6 +17,20 @@ class RemoteCommand
     const COMMAND = '/usr/bin/hyperion-remote %s';
 
     /**
+     * Command on argument
+     *
+     * @var string
+     */
+    const ARGUMENT_ON = '%s start hyperion';
+
+    /**
+     * Command off argument
+     *
+     * @var string
+     */
+    const ARGUMENT_OFF = '%s stop hyperion';
+
+    /**
      * Command address argument
      *
      * @var string
@@ -80,6 +94,13 @@ class RemoteCommand
     protected $address = false;
 
     /**
+     * Command controller
+     *
+     * @var string
+     */
+    protected $controller = false;
+
+    /**
      * Command priority as an integer
      *
      * @var integer
@@ -128,7 +149,7 @@ class RemoteCommand
      */
     public function callOn()
     {
-        $result = $this->executeCommand('/sbin/initctl start hyperion', true);
+        $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller), true);
 
         return $result;
     }
@@ -140,7 +161,7 @@ class RemoteCommand
      */
     public function callOff()
     {
-        $result = $this->executeCommand('/sbin/initctl stop hyperion', true);
+        $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller), true);
 
         return $result;
     }
@@ -212,13 +233,7 @@ class RemoteCommand
     {
         $this->executeCommand('--list | grep \'"name" : \' | cut -d \'"\' -f4 | tr \'\\n\' \',\'');
 
-        $effects = explode(',', $this->output);
-
-        if (count($effects) > 0) {
-            array_splice($effects, -1);
-        }
-
-        return $effects;
+        return $this->extractData();
     }
 
     /**
@@ -246,13 +261,23 @@ class RemoteCommand
     {
         $this->executeCommand('--list | grep \'"priority" : \' | cut -d \':\' -f2 | tr \'\\n\' \',\'');
 
-        $priorities = explode(',', $this->output);
+        return $this->extractData();
+    }
 
-        if (count($priorities) > 0) {
-            array_splice($priorities, -1);
+    /**
+     * Return the current array of data
+     *
+     * @return array
+     */
+    protected function extractData()
+    {
+        $array = explode(',', $this->output);
+
+        if (count($array) > 0) {
+            array_splice($array, -1);
         }
 
-        return $priorities;
+        return $array;
     }
 
     /**
@@ -266,6 +291,7 @@ class RemoteCommand
         $this->username = false;
         $this->password = false;
         $this->address = false;
+        $this->controller = false;
         $this->priority = false;
         $this->duration = false;
         $this->colour = false;
@@ -301,6 +327,20 @@ class RemoteCommand
     public function withAddress($value)
     {
         $this->address = (string) $value;
+
+        return $this;
+    }
+
+    /**
+     * Set the controller command
+     *
+     * @param integer $value The new controller command value
+     *
+     * @return self
+     */
+    public function withController($value)
+    {
+        $this->controller = (string) $value;
 
         return $this;
     }
@@ -383,8 +423,12 @@ class RemoteCommand
      *
      * @return boolean
      */
-    protected function executeCommand($command, $overwriteCommand = false)
+    private function executeCommand($command, $overwriteCommand = false)
     {
+        if (!$this->server) {
+            return false;
+        }
+
         if (!$overwriteCommand) {
             if ($this->address) {
                 $command = sprintf(self::ARGUMENT_ADDRESS, $this->address) . $command;
@@ -405,6 +449,10 @@ class RemoteCommand
             $this->output = shell_exec($command);
         } else {
             $connection = ssh2_connect($this->server, 22);
+
+            if (!$this->username) {
+                return false;
+            }
 
             if ($this->password) {
                 ssh2_auth_password($connection, $this->username, $this->password);

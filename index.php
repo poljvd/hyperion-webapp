@@ -18,6 +18,8 @@ include('colourPicker/lib/RemoteCommand.class.php');
 include('colourPicker/conf/Configuration.php');
 
 session_start();
+session_destroy();
+session_start();
 
 if (empty($_SESSION)) {
     $_SESSION['priority'] = array();
@@ -33,6 +35,7 @@ if (isset($_POST['submit'])) {
     switch ($_POST['submit']) {
         case 'Turn On':
             $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withController($config['serverController'])
                 ->withSleep(2)
                 ->callOn();
             if ($return) {
@@ -44,6 +47,7 @@ if (isset($_POST['submit'])) {
             break;
         case 'Turn Off':
             $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+                ->withController($config['serverController'])
                 ->withSleep(1)
                 ->callOff();
             if ($return) {
@@ -227,10 +231,10 @@ if ($config['overwriteStatus']) {
                     </div>
 
                     <div <?php echo !$currentStatus ? ' class="hidden"' : ''; ?>>
-                        <button id="effect-switch" class="large button blue"><?php echo !$_POST['effect'] ? ' Effects' : 'Close Effects'; ?></button>
+                        <button id="effect-switch" class="large button blue"><?php echo isset($_POST['effect']) && !$_POST['effect'] || !isset($_POST['effect']) ? ' Effects' : 'Close Effects'; ?></button>
                     </div>
 
-                    <div id="effect-display" class="<?php echo !$_POST['effect'] ? ' hidden' : ''; ?>">
+                    <div id="effect-display" class="<?php echo isset($_POST['effect']) && !$_POST['effect'] || !isset($_POST['effect']) ? ' hidden' : ''; ?>">
                         <input type="hidden" name="effect" id="effect" value="" />
                         <?php
 
