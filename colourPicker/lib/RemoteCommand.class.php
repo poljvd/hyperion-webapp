@@ -17,18 +17,25 @@ class RemoteCommand
     const COMMAND = '/usr/bin/hyperion-remote %s';
 
     /**
+     * Command application
+     *
+     * @var string
+     */
+    const APPLICATION = 'hyperion';
+
+    /**
      * Command on argument
      *
      * @var string
      */
-    const ARGUMENT_ON = '%s start hyperion';
+    const ARGUMENT_ON = '%s %s start %s';
 
     /**
      * Command off argument
      *
      * @var string
      */
-    const ARGUMENT_OFF = '%s stop hyperion';
+    const ARGUMENT_OFF = '%s %s stop %s';
 
     /**
      * Command address argument
@@ -101,6 +108,13 @@ class RemoteCommand
     protected $controller = false;
 
     /**
+     * Command controller type
+     *
+     * @var string
+     */
+    protected $controllerType = false;
+
+    /**
      * Command priority as an integer
      *
      * @var integer
@@ -149,7 +163,11 @@ class RemoteCommand
      */
     public function callOn()
     {
-        $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller), true);
+        if ($this->controllerType === 'prefix') {
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller, '', self::APPLICATION), true);
+        } else {
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller, self::APPLICATION, ''), true);
+        }
 
         return $result;
     }
@@ -161,7 +179,11 @@ class RemoteCommand
      */
     public function callOff()
     {
-        $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller), true);
+        if ($this->controllerType === 'prefix') {
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller, '', self::APPLICATION), true);
+        } else {
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller, self::APPLICATION, ''), true);
+        }
 
         return $result;
     }
@@ -334,13 +356,15 @@ class RemoteCommand
     /**
      * Set the controller command
      *
-     * @param integer $value The new controller command value
+     * @param integer $controller The new controller command value
+     * @param string  $type       The type of the controller command
      *
      * @return self
      */
-    public function withController($value)
+    public function withController($controller, $type)
     {
-        $this->controller = (string) $value;
+        $this->controller = (string) $controller;
+        $this->controllerType = (string) $type;
 
         return $this;
     }

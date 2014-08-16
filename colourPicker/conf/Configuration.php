@@ -38,9 +38,16 @@ $config = array(
     /**
      * System service controller.
      * Always required.
-     * Default "/sbin/initctl".
+     * Default "/sbin/initctl", can be "/etc/init.d".
      */
     'serverController' => '/sbin/initctl',
+
+    /**
+     * System service controller type.
+     * Always required.
+     * Default "prefix" for initctl, can be "postfix" for init.d.
+     */
+    'serverControllerType' => 'prefix',
 
     /**
      * Message display setting.

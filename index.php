@@ -35,7 +35,7 @@ if (isset($_POST['submit'])) {
     switch ($_POST['submit']) {
         case 'Turn On':
             $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
-                ->withController($config['serverController'])
+                ->withController($config['serverController'], $config['serverControllerType'])
                 ->withSleep(2)
                 ->callOn();
             if ($return) {
@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
             break;
         case 'Turn Off':
             $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
-                ->withController($config['serverController'])
+                ->withController($config['serverController'], $config['serverControllerType'])
                 ->withSleep(1)
                 ->callOff();
             if ($return) {
