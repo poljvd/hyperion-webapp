@@ -28,14 +28,14 @@ class RemoteCommand
      *
      * @var string
      */
-    const ARGUMENT_ON = '%s %s start %s';
+    const ARGUMENT_ON = '%s start %s';
 
     /**
      * Command off argument
      *
      * @var string
      */
-    const ARGUMENT_OFF = '%s %s stop %s';
+    const ARGUMENT_OFF = '%s stop %s';
 
     /**
      * Command address argument
@@ -157,6 +157,13 @@ class RemoteCommand
     protected $output;
 
     /**
+     * Command debug
+     *
+     * @var boolean
+     */
+    protected $debug = false;
+
+    /**
      * Execute the ON command
      *
      * @return boolean
@@ -164,9 +171,9 @@ class RemoteCommand
     public function callOn()
     {
         if ($this->controllerType === 'prefix') {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller, '', self::APPLICATION), true);
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller, self::APPLICATION), true);
         } else {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller, self::APPLICATION, ''), true);
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller . '/' . self::APPLICATION, ''), true);
         }
 
         return $result;
@@ -180,9 +187,9 @@ class RemoteCommand
     public function callOff()
     {
         if ($this->controllerType === 'prefix') {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller, '', self::APPLICATION), true);
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller, self::APPLICATION), true);
         } else {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller, self::APPLICATION, ''), true);
+            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller . '/' . self::APPLICATION, ''), true);
         }
 
         return $result;
@@ -319,22 +326,25 @@ class RemoteCommand
         $this->colour = false;
         $this->effect = false;
         $this->sleep = false;
+        $this->debug = false;
     }
 
     /**
      * Set the command server IP Address, authentication username and authentication password
      *
-     * @param string $address  The new command server IP Address value
-     * @param string $username The new command server authentication username value
-     * @param string $password The new command server authentication password value
+     * @param string  $address  The new command server IP Address value
+     * @param string  $username The new command server authentication username value
+     * @param string  $password The new command server authentication password value
+     * @param boolean $debug    Debug commands to the error log
      *
      * @return self
      */
-    public function withServer($address, $username, $password)
+    public function withServer($address, $username, $password, $debug)
     {
         $this->server = (string) $address;
         $this->username = (string) $username;
         $this->password = (string) $password;
+        $this->debug = (boolean) $debug;
 
         return $this;
     }
@@ -440,6 +450,20 @@ class RemoteCommand
     }
 
     /**
+     * Set the debug state
+     *
+     * @param boolean $value The debug state
+     *
+     * @return self
+     */
+    public function withDebug($value)
+    {
+        $this->debug = $value;
+
+        return $this;
+    }
+
+    /**
      * Execute command
      *
      * @param string  $command          The extending command to execute
@@ -467,6 +491,10 @@ class RemoteCommand
             }
 
             $command = sprintf(self::COMMAND, $command);
+        }
+
+        if ($this->debug) {
+            error_log("Executing '" . self::APPLICATION . "' command to '{$this->server}': {$command}");
         }
 
         if ($this->server == '127.0.0.1' || $this->server == getHostByName(getHostName())) {

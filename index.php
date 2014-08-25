@@ -34,7 +34,7 @@ $com = new RemoteCommand();
 if (isset($_POST['submit'])) {
     switch ($_POST['submit']) {
         case 'Turn On':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
                 ->withController($config['serverController'], $config['serverControllerType'])
                 ->withSleep(2)
                 ->callOn();
@@ -46,7 +46,7 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Turn Off':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
                 ->withController($config['serverController'], $config['serverControllerType'])
                 ->withSleep(1)
                 ->callOff();
@@ -58,7 +58,7 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Clear':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
                 ->withAddress($config['hyperionAddress'])
                 ->withPriority($_POST['priority'])
                 ->callClear();
@@ -71,7 +71,7 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Clear All':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
                 ->withAddress($config['hyperionAddress'])
                 ->callClearAll();
             $_SESSION['priority'] = array();
@@ -83,7 +83,7 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Change Colour':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
                 ->withAddress($config['hyperionAddress'])
                 ->withDuration($_POST['duration'] > 0 ? $_POST['duration'] : false)
                 ->withPriority($_POST['priority'])
@@ -98,7 +98,7 @@ if (isset($_POST['submit'])) {
             );
             break;
         case 'Loading Effect...':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
                 ->withAddress($config['hyperionAddress'])
                 ->withDuration($_POST['duration'] > 0 ? $_POST['duration'] : false)
                 ->withPriority($_POST['priority'])
@@ -126,13 +126,13 @@ if (isset($_POST['submit'])) {
     }
 }
 
-$currentStatus = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+$currentStatus = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
     ->withAddress($config['hyperionAddress'])
     ->getStatus();
-$currentCommands = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+$currentCommands = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
     ->withAddress($config['hyperionAddress'])
     ->getCommands();
-$currentEffects = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'])
+$currentEffects = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
     ->withAddress($config['hyperionAddress'])
     ->getEffects();
 

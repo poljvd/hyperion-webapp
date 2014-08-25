@@ -38,7 +38,7 @@ $config = array(
     /**
      * System service controller.
      * Always required.
-     * Default "/sbin/initctl", can be "/etc/init.d".
+     * Default "/sbin/initctl", can be "sudo /etc/init.d".
      */
     'serverController' => '/sbin/initctl',
 
@@ -47,7 +47,7 @@ $config = array(
      * Always required.
      * Default "prefix" for initctl, can be "postfix" for init.d.
      */
-    'serverControllerType' => 'prefix',
+    'serverControllerType' => 'postfix',
 
     /**
      * Message display setting.
@@ -62,4 +62,11 @@ $config = array(
      * Default "false".
      */
     'overwriteStatus' => false,
+
+    /**
+     * Debug mode.
+     * Set to true to allow command debugging to the PHP error log.
+     * Default "false".
+     */
+    'debug' => false,
 );
