@@ -108,13 +108,6 @@ class RemoteCommand
     protected $controller = false;
 
     /**
-     * Command controller type
-     *
-     * @var string
-     */
-    protected $controllerType = false;
-
-    /**
      * Command priority as an integer
      *
      * @var integer
@@ -164,17 +157,33 @@ class RemoteCommand
     protected $debug = false;
 
     /**
+     * Create a controller type command from an argument
+     *
+     * @param string $argument The argument command
+     *
+     * @return string
+     */
+    protected function controllerType($argument)
+    {
+        switch ($this->controller) {
+            case '/etc/init.d':
+            case 'sudo /etc/init.d':
+                return sprintf($argument, $this->controller . '/' . self::APPLICATION, '');
+                break;
+            case '/sbin/initctl':
+            default:
+                return sprintf($argument, $this->controller, self::APPLICATION);
+        }
+    }
+
+    /**
      * Execute the ON command
      *
      * @return boolean
      */
     public function callOn()
     {
-        if ($this->controllerType === 'prefix') {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller, self::APPLICATION), true);
-        } else {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_ON, $this->controller . '/' . self::APPLICATION, ''), true);
-        }
+        $result = $this->executeCommand($this->controllerType(self::ARGUMENT_ON), true);
 
         return $result;
     }
@@ -186,11 +195,7 @@ class RemoteCommand
      */
     public function callOff()
     {
-        if ($this->controllerType === 'prefix') {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller, self::APPLICATION), true);
-        } else {
-            $result = $this->executeCommand(sprintf(self::ARGUMENT_OFF, $this->controller . '/' . self::APPLICATION, ''), true);
-        }
+        $result = $this->executeCommand($this->controllerType(self::ARGUMENT_OFF), true);
 
         return $result;
     }
@@ -367,14 +372,12 @@ class RemoteCommand
      * Set the controller command
      *
      * @param integer $controller The new controller command value
-     * @param string  $type       The type of the controller command
      *
      * @return self
      */
-    public function withController($controller, $type)
+    public function withController($controller)
     {
         $this->controller = (string) $controller;
-        $this->controllerType = (string) $type;
 
         return $this;
     }

@@ -47,6 +47,33 @@ sudo service php5-fpm restart
 
 The site should now be available on http://ip-of-host:8888
 
+*Required if you are running Raspbian / Debian:*
+
+Update the visudo list:
+```
+pkexec visudo
+```
+
+In the section "# Cmnd alias specification" add:
+```
+Cmnd_Alias WEBDAEMONS = /etc/init.d/hyperion
+```
+
+In the section "#includedir /etc/sudoers.d"  add:
+```
+www-data ALL = (root) NOPASSWD: WEBDAEMONS
+```
+
+Open the configuration file:
+```
+sudo nano /home/pi/www/conf/Configuration.php
+```
+
+Update the configuration for "serverController"
+```
+'serverController' => 'sudo /etc/init.d',
+```
+
 ## FAQ
 - I got a 403 error when loading the webpage.  
 _Check if index.php exists in the /home/pi/www folder and check the permissions on the file (change with chmod -R 775 /home/pi/www)_

@@ -43,13 +43,6 @@ $config = array(
     'serverController' => '/sbin/initctl',
 
     /**
-     * System service controller type.
-     * Always required.
-     * Default "prefix" for initctl, can be "postfix" for init.d.
-     */
-    'serverControllerType' => 'postfix',
-
-    /**
      * Message display setting.
      * Set to false to stop status messages from being displayed.
      * Default "true".
