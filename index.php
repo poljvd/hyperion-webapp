@@ -34,8 +34,8 @@ $com = new RemoteCommand();
 if (isset($_POST['submit'])) {
     switch ($_POST['submit']) {
         case 'Turn On':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-                ->withController($config['serverController'])
+            $return = $com->withServer($config['hyperionAddress'], $config['hyperionUsername'], $config['hyperionPassword'], $config['debug'], $config['log'])
+                ->withController($config['hyperionController'])
                 ->withSleep(2)
                 ->callOn();
             if ($return) {
@@ -46,8 +46,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Turn Off':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-                ->withController($config['serverController'])
+            $return = $com->withServer($config['hyperionAddress'], $config['hyperionUsername'], $config['hyperionPassword'], $config['debug'], $config['log'])
+                ->withController($config['hyperionController'])
                 ->withSleep(1)
                 ->callOff();
             if ($return) {
@@ -58,8 +58,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Clear':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-                ->withAddress($config['hyperionAddress'])
+            $return = $com->withServer($config['remoteAddress'], $config['remoteUsername'], $config['remotePassword'], $config['debug'], $config['log'])
+                ->withAddress($config['hyperionAddress'] . ':' . $config['hyperionPort'])
                 ->withPriority($_POST['priority'])
                 ->callClear();
             unset($_SESSION['priority'][$_POST['priority']]);
@@ -71,8 +71,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Clear All':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-                ->withAddress($config['hyperionAddress'])
+            $return = $com->withServer($config['remoteAddress'], $config['remoteUsername'], $config['remotePassword'], $config['debug'], $config['log'])
+                ->withAddress($config['hyperionAddress'] . ':' . $config['hyperionPort'])
                 ->callClearAll();
             $_SESSION['priority'] = array();
             if ($return) {
@@ -83,8 +83,8 @@ if (isset($_POST['submit'])) {
             }
             break;
         case 'Change Colour':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-                ->withAddress($config['hyperionAddress'])
+            $return = $com->withServer($config['remoteAddress'], $config['remoteUsername'], $config['remotePassword'], $config['debug'], $config['log'])
+                ->withAddress($config['hyperionAddress'] . ':' . $config['hyperionPort'])
                 ->withDuration($_POST['duration'] > 0 ? $_POST['duration'] : false)
                 ->withPriority($_POST['priority'])
                 ->withColour($_POST['colour'])
@@ -98,8 +98,8 @@ if (isset($_POST['submit'])) {
             );
             break;
         case 'Loading Effect...':
-            $return = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-                ->withAddress($config['hyperionAddress'])
+            $return = $com->withServer($config['remoteAddress'], $config['remoteUsername'], $config['remotePassword'], $config['debug'], $config['log'])
+                ->withAddress($config['hyperionAddress'] . ':' . $config['hyperionPort'])
                 ->withDuration($_POST['duration'] > 0 ? $_POST['duration'] : false)
                 ->withPriority($_POST['priority'])
                 ->withEffect($_POST['effect'])
@@ -126,14 +126,13 @@ if (isset($_POST['submit'])) {
     }
 }
 
-$currentStatus = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-    ->withAddress($config['hyperionAddress'])
+$currentStatus = $com->withServer($config['hyperionAddress'], $config['hyperionUsername'], $config['hyperionPassword'], $config['debug'], $config['log'])
     ->getStatus();
-$currentCommands = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-    ->withAddress($config['hyperionAddress'])
+$currentCommands = $com->withServer($config['remoteAddress'], $config['remoteUsername'], $config['remotePassword'], $config['debug'], $config['log'])
+    ->withAddress($config['hyperionAddress'] . ':' . $config['hyperionPort'])
     ->getCommands();
-$currentEffects = $com->withServer($config['serverAddress'], $config['serverUsername'], $config['serverPassword'], $config['debug'])
-    ->withAddress($config['hyperionAddress'])
+$currentEffects = $com->withServer($config['remoteAddress'], $config['remoteUsername'], $config['remotePassword'], $config['debug'], $config['log'])
+    ->withAddress($config['hyperionAddress'] . ':' . $config['hyperionPort'])
     ->getEffects();
 
 if ($currentCommands) {

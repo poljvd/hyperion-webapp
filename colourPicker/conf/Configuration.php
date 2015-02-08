@@ -9,38 +9,58 @@
 
 $config = array(
     /**
-     * Remote server IP address with port number.
+     * Remote server IP address.
      * Always required.
      * Default "127.0.0.1".
      */
-    'serverAddress' => '127.0.0.1',
+    'remoteAddress' => '127.0.0.1',
 
     /**
      * Remote server authentication username.
      * Set to false when unneeded.
      * Default "false".
      */
-    'serverUsername' => false,
+    'remoteUsername' => false,
 
     /**
      * Remote server authentication password.
      * Set to false when unneeded. Default "false".
      */
-    'serverPassword' => false,
+    'remotePassword' => false,
 
     /**
-     * Hyperion IP address with port number.
+     * Hyperion IP address.
      * Always required.
-     * Default "127.0.0.1:19444".
+     * Default "127.0.0.1".
      */
-    'hyperionAddress' => '127.0.0.1:19444',
+    'hyperionAddress' => '127.0.0.1',
+
+    /**
+     * Hyperion port.
+     * Always required.
+     * Default "19444".
+     */
+    'hyperionPort' => '19444',
+
+    /**
+     * Hyperion server authentication username.
+     * Set to false when unneeded.
+     * Default "false".
+     */
+    'hyperionUsername' => false,
+
+    /**
+     * Hyperion server authentication password.
+     * Set to false when unneeded. Default "false".
+     */
+    'hyperionPassword' => false,
 
     /**
      * System service controller.
      * Always required.
      * Default "/sbin/initctl", can be "sudo /etc/init.d".
      */
-    'serverController' => '/sbin/initctl',
+    'hyperionController' => '/sbin/initctl',
 
     /**
      * Message display setting.
@@ -62,4 +82,12 @@ $config = array(
      * Default "false".
      */
     'debug' => false,
+
+    /**
+     * Log mode.
+     * Set to error_log or var_dump.
+     * Default "error_log".
+     */
+    'log' => 'error_log',
 );
+

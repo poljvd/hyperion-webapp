@@ -157,6 +157,13 @@ class RemoteCommand
     protected $debug = false;
 
     /**
+     * Command log
+     *
+     * @var string
+     */
+    protected $log;
+
+    /**
      * Create a controller type command from an argument
      *
      * @param string $argument The argument command
@@ -341,15 +348,17 @@ class RemoteCommand
      * @param string  $username The new command server authentication username value
      * @param string  $password The new command server authentication password value
      * @param boolean $debug    Debug commands to the error log
+     * @param string  $log      Log commands to the set log
      *
      * @return self
      */
-    public function withServer($address, $username, $password, $debug)
+    public function withServer($address, $username, $password, $debug, $log)
     {
         $this->server = (string) $address;
         $this->username = (string) $username;
         $this->password = (string) $password;
         $this->debug = (boolean) $debug;
+        $this->log = (string) $log;
 
         return $this;
     }
@@ -467,6 +476,20 @@ class RemoteCommand
     }
 
     /**
+     * Set the log state
+     *
+     * @param string $value The log state
+     *
+     * @return self
+     */
+    public function withLog($value)
+    {
+        $this->log = $value;
+
+        return $this;
+    }
+
+    /**
      * Execute command
      *
      * @param string  $command          The extending command to execute
@@ -497,7 +520,8 @@ class RemoteCommand
         }
 
         if ($this->debug) {
-            error_log("Executing '" . self::APPLICATION . "' command to '{$this->server}': {$command}");
+            $log = $this->log;
+            $log("Executing '" . self::APPLICATION . "' command to '{$this->server}': {$command}");
         }
 
         if ($this->server == '127.0.0.1' || $this->server == getHostByName(getHostName())) {
