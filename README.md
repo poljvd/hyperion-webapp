@@ -33,6 +33,18 @@ server {
 }
 ```
 
+```
+sudo nano /etc/nginx/fastcgi_params
+```
+
+Add the following contents to the file:
+```
+fastcgi_param    SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+fastcgi_param    PATH_INFO          $fastcgi_path_info;
+fastcgi_param    PATH_TRANSLATED    $document_root$fastcgi_path_info;
+
+```
+
 Download the contents of this repository to /home/pi/www. You can either download a zip from github or clone the repository using (you need to have git installed for this):
 ```
 git clone https://github.com/poljvd/hyperion-webapp.git /home/pi/www
